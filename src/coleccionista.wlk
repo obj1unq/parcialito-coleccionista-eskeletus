@@ -66,6 +66,29 @@
 
 // PUNTO 1: COLECCIONES
 object coleccionista {
+	var property coleccion = #{} 
+	
+	method agregarElemento(_elemento){
+		coleccion.add(_elemento)
+	}
+
+	method quitarElemento(_elemento){
+     	coleccion.remove(_elemento)
+    }
+    
+	method objetosFragiles() = self.coleccion().filter({ _elemento => _elemento.esFragil() })
+
+	method objetoFragilMasCaro() = self.objetosFragiles().max({elemento => elemento.valor()})
+
+	method valorEnObjetosFragiles() = self.objetosFragiles().sum({elemento => elemento.valor()})
+
+	method valorEnCategoria(_categoria) = self.coleccion().filter({elemento => elemento.categoria() == _categoria}).sum({elemento => elemento.valor()})
+
+	method existeElementoDe(_categoria) = self.coleccion().any({ elemento => elemento.categoria() == _categoria})
+
+	method categorias() = #{juguete,musica}.intersection(self.coleccion().map({elemento=>elemento.categoria()}))
+
+    method todosValiosos() = self.coleccion().all({elemento=>elemento.valor() > 600})
 	
 	//TODO: Completar la implementacion de este objeto		
 
@@ -108,7 +131,43 @@ object musica {
 
 // PUNTO 2: POLIMORFISMO. 
 object guitarraElectrica {
+	var property microfonos = #{}
+	var property estuche = sinEstuche
+	
+	method esFragil() = not estuche.protegeGuitarra()
+	method valor() = 10000 + self.microfonos().sum({_microfono => _microfono.valor()})	
+	method categoria() = musica
+	
+	method agregarMicrofono(_microfono) {
+		microfonos.add(_microfono)
+	}
+	method quitarMicrofonos(_microfono) {
+		microfonos.remove(_microfono)
+	}
+	method cambiarEstuchePor(_estuche){
+		estuche = _estuche
+	}
    //TODO Completar la implementacion de este objeto
+}
+
+object sinEstuche{
+	method protegeGuitarra() = false
+}
+
+object estucheFlexible{
+	method protegeGuitarra() = false
+}
+
+object estucheRigido{
+	method protegeGuitarra() = true
+}
+
+object microfonoGibson{
+	method valor() = 1000
+}
+
+object microfonoDiMarzio{
+	method valor() = 800
 }
 
 //TODO: agregar los objetos que falten! Si no agregaste ninguno repensá tu solución; pista: el punto se llama "POLIMORFISMO" 
